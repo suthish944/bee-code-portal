@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bee-Code Pro: Advanced Edition 🐝</title>
+    <title>Bee-Code</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -48,6 +48,13 @@
             padding: 2rem; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2);
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             width: 100%; max-width: 700px; text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* Responsive adjustment for Mobile/TV */
+        @media (max-width: 600px) {
+            .container { width: 95%; padding: 1.5rem; }
+            .settings-grid { grid-template-columns: 1fr; }
         }
 
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
@@ -74,7 +81,7 @@
 
         button:hover { transform: translateY(-2px); opacity: 0.9; }
         button.secondary-btn { background: var(--accent); color: var(--card-text); }
-        button.logout-btn { background: #ef4444; margin-top: 15px; width: auto; padding: 8px 20px; font-size: 13px; }
+        button.logout-btn { background: #ef4444; margin-top: 15px; width: auto; padding: 8px 20px; font-size: 13px; flex: none; }
 
         .output-wrapper { position: relative; margin-top: 15px; }
         
@@ -147,7 +154,7 @@
             <textarea id="textIn" rows="2" placeholder="Secret message! @2026..."></textarea>
             
             <div class="btn-group">
-                <button onclick="process('encode')">Generate Code ✨</button>
+                <button onclick="process('encode')">Generate Code</button>
                 <input type="file" id="fileInput" style="display: none;" accept=".txt" onchange="handleFileUpload(event)">
                 <button class="secondary-btn" onclick="document.getElementById('fileInput').click()">Upload 📁</button>
                 <button class="secondary-btn" onclick="swapText()">Quick Swap ⇄</button>
@@ -189,7 +196,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // Verified Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyA2OYIUinGRh4_FFIIwX3hjdx1LQ8EjSCM",
             authDomain: "bee-code-project-8af10.firebaseapp.com",
@@ -203,19 +209,14 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Security check: Verify user is logged in
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                // Return to login if no active session
-                window.location.href = "login.html";
-            }
+            if (!user) { window.location.href = "index.html"; }
         });
 
-        // Global logout function
         window.logout = function() {
             signOut(auth).then(() => {
                 sessionStorage.clear();
-                window.location.href = "login.html";
+                window.location.href = "index.html";
             }).catch((error) => alert(error.message));
         }
     </script>
@@ -227,64 +228,42 @@
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('textIn').value = e.target.result;
-            };
+            reader.onload = function(e) { document.getElementById('textIn').value = e.target.result; };
             reader.readAsText(file);
         }
 
         function getAlphabet(keyword, key) {
-            let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;':\",./<>?";
+            let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;':\",./<>? ";
             let uniqueKey = [...new Set(keyword.split(""))];
             let remaining = charset.split("").filter(char => !uniqueKey.includes(char));
             let finalAlpha = uniqueKey.concat(remaining);
-            
             let map = {};
-            finalAlpha.forEach((char, index) => {
-                map[char] = (index + parseInt(key)).toString();
-            });
+            finalAlpha.forEach((char, index) => { map[char] = (index + parseInt(key)).toString(); });
             return map;
         }
 
-        function validateFields() {
-            const numKeyInput = document.getElementById('numKey').value;
-            const wordKey = document.getElementById('masterKey').value.trim();
-
-            if (numKeyInput === "" || wordKey === "") {
-                alert("⚠️ Required: Please enter both a Numeric Key and a Master Keyword.");
-                return false;
-            }
-            return { numKey: parseInt(numKeyInput), wordKey };
-        }
-
         function process(mode) {
-            const validation = validateFields();
-            if (!validation) return; 
+            const numKey = document.getElementById('numKey').value;
+            const wordKey = document.getElementById('masterKey').value.trim();
+            if(!numKey || !wordKey) return alert("⚠️ Required: Numeric Key & Master Keyword");
 
-            const { numKey, wordKey } = validation;
             const alphaMap = getAlphabet(wordKey, numKey);
             const reverseMap = Object.fromEntries(Object.entries(alphaMap).map(([k, v]) => [v, k]));
 
             if (mode === 'encode') {
                 let input = document.getElementById('textIn').value;
                 if (!input.trim()) return;
-
-                let words = input.split(" ").map(word => {
+                let result = input.split(" ").map(word => {
                     return word.split("").map(c => alphaMap[c] || c).join(".");
-                });
-                let result = words.join("_");
+                }).join("_");
                 document.getElementById('codeOut').innerText = result;
                 addToHistory("Encoded", result);
             } else {
                 let input = document.getElementById('numIn').value.trim();
                 if (!input) return;
-
-                let words = input.split("_").map(word => {
-                    return word.split("").map(n => {
-                        return reverseMap[n] !== undefined ? reverseMap[n] : n;
-                    }).join("");
-                });
-                let result = words.join(" ");
+                let result = input.split("_").map(word => {
+                    return word.split(".").map(n => reverseMap[n] || n).join("");
+                }).join(" ");
                 document.getElementById('textOut').innerText = result;
                 addToHistory("Decoded", result);
             }
@@ -307,39 +286,29 @@
             document.getElementById('codeOut').innerText = "...";
             document.getElementById('textOut').innerText = "...";
             document.getElementById('historyLog').innerHTML = "<h3>Recent History</h3>";
-            document.getElementById('fileInput').value = "";
         }
 
         function copy(id, event) {
             const content = document.getElementById(id).innerText;
             if(content === "..." || content === "") return;
             navigator.clipboard.writeText(content);
-            
             const btn = event.currentTarget;
-            const originalText = btn.innerText;
+            const oldText = btn.innerText;
             btn.innerText = "Saved!";
-            setTimeout(() => btn.innerText = originalText, 1500);
+            setTimeout(() => btn.innerText = oldText, 1500);
         }
 
         function shareResult(id) {
             const content = document.getElementById(id).innerText;
-            if(content === "..." || content === "") return;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Bee-Code Pro Message',
-                    text: content
-                }).catch(() => {});
-            } else {
-                alert("Sharing is not supported on this browser. Use 'Copy Text' instead!");
-            }
+            if(content === "..." || content === "" || !navigator.share) return alert("Use 'Copy Text' instead!");
+            navigator.share({ title: 'Bee-Code Message', text: content }).catch(() => {});
         }
 
         function addToHistory(type, text) {
             const log = document.getElementById('historyLog');
             const item = document.createElement('div');
             item.className = 'history-item';
-            item.innerHTML = `<span><strong>${type}:</strong> ${text.substring(0,30)}${text.length > 30 ? '...' : ''}</span> <span>${new Date().toLocaleTimeString()}</span>`;
+            item.innerHTML = `<span><strong>${type}:</strong> ${text.substring(0,30)}...</span> <span>${new Date().toLocaleTimeString()}</span>`;
             log.prepend(item);
         }
     </script>
