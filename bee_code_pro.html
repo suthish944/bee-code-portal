@@ -335,15 +335,15 @@
             }
         }
 
-        // --- STEGANOGRAPHY CORE LOGIC ---
+        // --- SAFE STEGANOGRAPHY LOGIC ---
         function hideInImage() {
             const code = document.getElementById('codeOut').innerText;
             if (code === "..." || !code) return alert("Generate a Bee-Code first!");
 
             const img = new Image();
             img.crossOrigin = "Anonymous";
-            // Uses a high-quality placeholder image as the carrier
-            img.src = "https://picsum.photos/600/400"; 
+            // FIXED SAFE SOURCE: Uses a pre-filtered nature image to avoid inappropriate content
+            img.src = "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=600&q=80"; 
 
             img.onload = function() {
                 const canvas = document.getElementById('stegoCanvas');
@@ -354,8 +354,6 @@
 
                 const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 const data = imgData.data;
-
-                // Add end-of-message marker
                 const message = code + "###BEE###";
                 
                 for (let i = 0; i < message.length; i++) {
@@ -367,7 +365,7 @@
                 link.download = 'bee_secret_image.png';
                 link.href = canvas.toDataURL("image/png");
                 link.click();
-                alert("🖼️ Secret Image Saved! You can now share this picture.");
+                alert("🖼️ Secret Image Saved! (Safe Nature Carrier)");
             };
         }
 
@@ -397,8 +395,8 @@
 
                     const finalCode = decoded.replace("###BEE###", "");
                     document.getElementById('numIn').value = finalCode;
-                    alert("🐝 Secret Code Extracted from Image!");
-                    process('decode'); // Auto-decode after extraction
+                    alert("🐝 Secret Code Extracted!");
+                    process('decode'); 
                 };
                 img.src = e.target.result;
             };
