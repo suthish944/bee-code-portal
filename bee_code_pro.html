@@ -335,14 +335,16 @@
             }
         }
 
-        // --- SAFE STEGANOGRAPHY LOGIC ---
+        // --- ENHANCED PIXEL-SPREADING STEGANOGRAPHY ---
+        const PIXEL_GAP = 20; // FIX FOR DISADVANTAGE #4: Spreads data to prevent noise
+
         function hideInImage() {
             const code = document.getElementById('codeOut').innerText;
             if (code === "..." || !code) return alert("Generate a Bee-Code first!");
 
             const img = new Image();
             img.crossOrigin = "Anonymous";
-            // FIXED SAFE SOURCE: Uses a pre-filtered nature image to avoid inappropriate content
+            // Safe nature source
             img.src = "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=600&q=80"; 
 
             img.onload = function() {
@@ -356,16 +358,21 @@
                 const data = imgData.data;
                 const message = code + "###BEE###";
                 
+                // Ensure message fits with the gap
+                if (message.length * PIXEL_GAP * 4 > data.length) {
+                    return alert("Message is too large for the current image capacity.");
+                }
+
                 for (let i = 0; i < message.length; i++) {
-                    data[i * 4] = message.charCodeAt(i); 
+                    data[i * 4 * PIXEL_GAP] = message.charCodeAt(i); 
                 }
 
                 ctx.putImageData(imgData, 0, 0);
                 const link = document.createElement('a');
-                link.download = 'bee_secret_image.png';
+                link.download = 'bee_secure_image.png';
                 link.href = canvas.toDataURL("image/png");
                 link.click();
-                alert("🖼️ Secret Image Saved! (Safe Nature Carrier)");
+                alert("🖼️ Secret Image Saved! (Safe Carrier & Spaced-Pixel Protection)");
             };
         }
 
@@ -387,7 +394,8 @@
                     const data = imgData.data;
                     let decoded = "";
 
-                    for (let i = 0; i < data.length; i += 4) {
+                    // Extract using the matching PIXEL_GAP
+                    for (let i = 0; i < data.length; i += (4 * PIXEL_GAP)) {
                         const char = String.fromCharCode(data[i]);
                         decoded += char;
                         if (decoded.endsWith("###BEE###")) break;
