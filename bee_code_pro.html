@@ -29,7 +29,7 @@
         body {
             font-family: 'Quicksand', sans-serif;
             margin: 0; 
-            padding: 10px; /* Reduced for mobile */
+            padding: 10px; 
             display: flex; 
             flex-direction: column; 
             align-items: center;
@@ -41,7 +41,6 @@
             box-sizing: border-box;
         }
 
-        /* Responsive Blobs */
         .blob {
             position: fixed; 
             width: 30vw; 
@@ -65,22 +64,21 @@
             border: 1px solid rgba(255,255,255,0.2);
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             width: 100%; 
-            max-width: 800px; /* Increased for better TV/Laptop view */
+            max-width: 800px; 
             text-align: center;
             box-sizing: border-box;
             margin: 20px auto;
         }
 
-        /* Device Specific Adjustments */
         @media (max-width: 768px) {
             .container { padding: 1.2rem; border-radius: 20px; }
-            .settings-grid { grid-template-columns: 1fr !important; } /* Stack keys on mobile/tablet */
+            .settings-grid { grid-template-columns: 1fr !important; } 
             h1 { font-size: 1.8rem; }
             .btn-group button { font-size: 14px; padding: 10px; }
         }
 
         @media (min-width: 1200px) {
-            .container { max-width: 900px; padding: 3rem; } /* TV/Large Monitor padding */
+            .container { max-width: 900px; padding: 3rem; } 
         }
 
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
@@ -102,13 +100,13 @@
             outline: none; 
             box-sizing: border-box;
             transition: transform 0.2s ease;
-            font-size: 16px; /* Prevents auto-zoom on iOS */
+            font-size: 16px; 
         }
 
         .btn-group { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
         
         button {
-            flex: 1 1 auto; /* Allows buttons to wrap and resize */
+            flex: 1 1 auto; 
             min-width: 120px;
             padding: 12px; 
             border: none; 
@@ -182,7 +180,7 @@
             display: flex; 
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap; /* Better for narrow screens */
+            flex-wrap: wrap; 
         }
 
         .theme-toggle { cursor: pointer; font-size: 24px; padding: 5px; }
@@ -219,6 +217,7 @@
                 <input type="file" id="fileInput" style="display: none;" accept=".txt" onchange="handleFileUpload(event)">
                 <button class="secondary-btn" onclick="document.getElementById('fileInput').click()">Upload 📁</button>
                 <button class="secondary-btn" onclick="swapText()">Quick Swap ⇄</button>
+                <button class="secondary-btn" onclick="hideInImage()">Save to Image 🖼️</button>
                 <button onclick="resetAll()">Reset ↺</button>
             </div>
             
@@ -235,7 +234,11 @@
         <div class="section">
             <label>Decryption Chamber</label>
             <textarea id="numIn" rows="2" placeholder="Paste numeric sequence here..."></textarea>
-            <button onclick="process('decode')" style="margin-top: 10px; width: 100%;">Decode Message 🍯</button>
+            <div class="btn-group">
+                <button onclick="process('decode')" style="width: 100%;">Decode Message 🍯</button>
+                <input type="file" id="stegoInput" style="display: none;" accept="image/*" onchange="extractFromImage(event)">
+                <button class="secondary-btn" onclick="document.getElementById('stegoInput').click()" style="width: 100%;">Load from Image 🔍</button>
+            </div>
             
             <div class="output-wrapper">
                 <div class="output-header">
@@ -252,6 +255,8 @@
     <div class="history" id="historyLog">
         <h3>Recent History</h3>
     </div>
+
+    <canvas id="stegoCanvas" style="display:none;"></canvas>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -328,6 +333,76 @@
                 document.getElementById('textOut').innerText = result;
                 addToHistory("Decoded", result);
             }
+        }
+
+        // --- STEGANOGRAPHY CORE LOGIC ---
+        function hideInImage() {
+            const code = document.getElementById('codeOut').innerText;
+            if (code === "..." || !code) return alert("Generate a Bee-Code first!");
+
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            // Uses a high-quality placeholder image as the carrier
+            img.src = "https://picsum.photos/600/400"; 
+
+            img.onload = function() {
+                const canvas = document.getElementById('stegoCanvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imgData.data;
+
+                // Add end-of-message marker
+                const message = code + "###BEE###";
+                
+                for (let i = 0; i < message.length; i++) {
+                    data[i * 4] = message.charCodeAt(i); 
+                }
+
+                ctx.putImageData(imgData, 0, 0);
+                const link = document.createElement('a');
+                link.download = 'bee_secret_image.png';
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                alert("🖼️ Secret Image Saved! You can now share this picture.");
+            };
+        }
+
+        function extractFromImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.getElementById('stegoCanvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imgData.data;
+                    let decoded = "";
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        const char = String.fromCharCode(data[i]);
+                        decoded += char;
+                        if (decoded.endsWith("###BEE###")) break;
+                    }
+
+                    const finalCode = decoded.replace("###BEE###", "");
+                    document.getElementById('numIn').value = finalCode;
+                    alert("🐝 Secret Code Extracted from Image!");
+                    process('decode'); // Auto-decode after extraction
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
         function swapText() {
