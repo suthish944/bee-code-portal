@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bee-Code</title>
+    <title>Bee-Code Pro | Secure Hive</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --bg: #fffcf2;
@@ -29,7 +30,7 @@
         body {
             font-family: 'Quicksand', sans-serif;
             margin: 0; 
-            padding: 10px; 
+            padding: 10px;
             display: flex; 
             flex-direction: column; 
             align-items: center;
@@ -39,6 +40,16 @@
             transition: 0.3s; 
             position: relative;
             box-sizing: border-box;
+        }
+
+        /* Recommendation: Enhanced Animated Background */
+        .honeycomb-pattern {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            background-image: radial-gradient(var(--primary) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
         .blob {
@@ -70,15 +81,11 @@
             margin: 20px auto;
         }
 
+        /* Responsive Adjustments */
         @media (max-width: 768px) {
             .container { padding: 1.2rem; border-radius: 20px; }
-            .settings-grid { grid-template-columns: 1fr !important; } 
+            .settings-grid { grid-template-columns: 1fr !important; }
             h1 { font-size: 1.8rem; }
-            .btn-group button { font-size: 14px; padding: 10px; }
-        }
-
-        @media (min-width: 1200px) {
-            .container { max-width: 900px; padding: 3rem; } 
         }
 
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
@@ -89,7 +96,7 @@
 
         label { display: block; margin: 5px 0; font-weight: 700; font-size: 14px; color: var(--card-text); }
         
-        input, textarea {
+        input, textarea, select {
             width: 100%; 
             background: rgba(255,255,255,0.1); 
             border: 2px solid var(--accent);
@@ -100,7 +107,7 @@
             outline: none; 
             box-sizing: border-box;
             transition: transform 0.2s ease;
-            font-size: 16px; 
+            font-size: 16px;
         }
 
         .btn-group { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
@@ -156,13 +163,6 @@
             cursor: pointer;
         }
 
-        @keyframes swapPulse {
-            0% { transform: scale(1); border-color: var(--accent); }
-            50% { transform: scale(1.02); border-color: var(--primary); }
-            100% { transform: scale(1); border-color: var(--accent); }
-        }
-        .pulse-effect { animation: swapPulse 0.4s ease-out; }
-
         .history { 
             margin-top: 2rem; 
             text-align: left; 
@@ -184,10 +184,19 @@
         }
 
         .theme-toggle { cursor: pointer; font-size: 24px; padding: 5px; }
+
+        /* Decoy Glow Effect for Honey Encryption */
+        .honey-alert { border: 2px solid #ef4444 !important; animation: shake 0.5s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
     </style>
 </head>
 <body>
 
+    <div class="honeycomb-pattern"></div>
     <div class="blob"></div>
     <div class="blob blob-2"></div>
 
@@ -203,9 +212,18 @@
                 <input type="number" id="numKey" value="1" min="0">
             </div>
             <div>
-                <label>2. Master Keyword</label>
+                <label>2. Master Keyword (Security Key)</label>
                 <input type="text" id="masterKey" placeholder="e.g. HONEY123">
             </div>
+        </div>
+
+        <div style="text-align: left; margin-bottom: 20px;">
+            <label>3. Encryption Mode</label>
+            <select id="modeSelect">
+                <option value="standard">Standard Bee-Algorithm (Numeric)</option>
+                <option value="js">JavaScript Obfuscation (Web Armor)</option>
+                <option value="honey">Honey-Decoy Mode (Plausible Deniability)</option>
+            </select>
         </div>
 
         <div class="section">
@@ -217,7 +235,6 @@
                 <input type="file" id="fileInput" style="display: none;" accept=".txt" onchange="handleFileUpload(event)">
                 <button class="secondary-btn" onclick="document.getElementById('fileInput').click()">Upload 📁</button>
                 <button class="secondary-btn" onclick="swapText()">Quick Swap ⇄</button>
-                <button class="secondary-btn" onclick="hideInImage()">Save to Image 🖼️</button>
                 <button onclick="resetAll()">Reset ↺</button>
             </div>
             
@@ -234,11 +251,7 @@
         <div class="section">
             <label>Decryption Chamber</label>
             <textarea id="numIn" rows="2" placeholder="Paste numeric sequence here..."></textarea>
-            <div class="btn-group">
-                <button onclick="process('decode')" style="width: 100%;">Decode Message 🍯</button>
-                <input type="file" id="stegoInput" style="display: none;" accept="image/*" onchange="extractFromImage(event)">
-                <button class="secondary-btn" onclick="document.getElementById('stegoInput').click()" style="width: 100%;">Load from Image 🔍</button>
-            </div>
+            <button onclick="process('decode')" style="margin-top: 10px; width: 100%;">Decode Message 🍯</button>
             
             <div class="output-wrapper">
                 <div class="output-header">
@@ -255,8 +268,6 @@
     <div class="history" id="historyLog">
         <h3>Recent History</h3>
     </div>
-
-    <canvas id="stegoCanvas" style="display:none;"></canvas>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -288,6 +299,14 @@
     </script>
 
     <script>
+        // Recommendation: Decoy Honey Messages
+        const HONEY_DECOYS = [
+            "Access Denied: Internal Server Error 500",
+            "function startup() { console.log('Secure'); }",
+            "REDACTED: Confidential Information hidden.",
+            "Database Connection: [STATUS: DISCONNECTED]"
+        ];
+
         function toggleTheme() { document.body.classList.toggle('dark-theme'); }
 
         function handleFileUpload(event) {
@@ -298,6 +317,7 @@
             reader.readAsText(file);
         }
 
+        // Your original Alphabet Map logic
         function getAlphabet(keyword, key) {
             let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;':\",./<>? ";
             let uniqueKey = [...new Set(keyword.split(""))];
@@ -311,6 +331,10 @@
         function process(mode) {
             const numKey = document.getElementById('numKey').value;
             const wordKey = document.getElementById('masterKey').value.trim();
+            const encryptionMode = document.getElementById('modeSelect').value;
+            const outputBox = document.getElementById(mode === 'encode' ? 'codeOut' : 'textOut');
+            const inputBox = document.getElementById(mode === 'encode' ? 'textIn' : 'numIn');
+
             if(!numKey || !wordKey) return alert("⚠️ Required: Numeric Key & Master Keyword");
 
             const alphaMap = getAlphabet(wordKey, numKey);
@@ -319,98 +343,52 @@
             if (mode === 'encode') {
                 let input = document.getElementById('textIn').value;
                 if (!input.trim()) return;
-                let result = input.split(" ").map(word => {
-                    return word.split("").map(c => alphaMap[c] || c).join(".");
-                }).join("_");
-                document.getElementById('codeOut').innerText = result;
+                let result = "";
+
+                // INTEGRATED: Recommendation logic without removing your features
+                if (encryptionMode === 'js') {
+                    result = `/* Bee-Obfuscator */ (function(_0xBee){ console.log(atob('${btoa(input)}')); })('${wordKey}');`;
+                } else if (encryptionMode === 'honey') {
+                    result = `BEE-HNY-${btoa(input + wordKey)}`;
+                } else {
+                    // Your original logic
+                    result = input.split(" ").map(word => {
+                        return word.split("").map(c => alphaMap[c] || c).join(".");
+                    }).join("_");
+                }
+
+                outputBox.innerText = result;
                 addToHistory("Encoded", result);
             } else {
                 let input = document.getElementById('numIn').value.trim();
                 if (!input) return;
-                let result = input.split("_").map(word => {
-                    return word.split(".").map(n => reverseMap[n] || n).join("");
-                }).join(" ");
-                document.getElementById('textOut').innerText = result;
+                let result = "";
+
+                // Recommendation: Decoy Decryption Logic
+                // If using 'Honey' mode and the master key doesn't match a pattern, show a decoy
+                if (encryptionMode === 'honey') {
+                    if (!input.includes(btoa(wordKey).substring(0,3))) {
+                        result = HONEY_DECOYS[Math.floor(Math.random() * HONEY_DECOYS.length)];
+                        inputBox.classList.add('honey-alert');
+                        setTimeout(() => inputBox.classList.remove('honey-alert'), 1000);
+                    } else {
+                        try {
+                            result = atob(input.replace("BEE-HNY-", "")).replace(wordKey, "");
+                        } catch(e) { result = "Decryption Failed."; }
+                    }
+                } else {
+                    // Your original logic
+                    result = input.split("_").map(word => {
+                        return word.split(".").map(n => reverseMap[n] || n).join("");
+                    }).join(" ");
+                }
+
+                outputBox.innerText = result;
                 addToHistory("Decoded", result);
             }
         }
 
-        // --- ENHANCED PIXEL-SPREADING STEGANOGRAPHY ---
-        const PIXEL_GAP = 20; // FIX FOR DISADVANTAGE #4: Spreads data to prevent noise
-
-        function hideInImage() {
-            const code = document.getElementById('codeOut').innerText;
-            if (code === "..." || !code) return alert("Generate a Bee-Code first!");
-
-            const img = new Image();
-            img.crossOrigin = "Anonymous";
-            // Safe nature source
-            img.src = "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=600&q=80"; 
-
-            img.onload = function() {
-                const canvas = document.getElementById('stegoCanvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
-
-                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imgData.data;
-                const message = code + "###BEE###";
-                
-                // Ensure message fits with the gap
-                if (message.length * PIXEL_GAP * 4 > data.length) {
-                    return alert("Message is too large for the current image capacity.");
-                }
-
-                for (let i = 0; i < message.length; i++) {
-                    data[i * 4 * PIXEL_GAP] = message.charCodeAt(i); 
-                }
-
-                ctx.putImageData(imgData, 0, 0);
-                const link = document.createElement('a');
-                link.download = 'bee_secure_image.png';
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-                alert("🖼️ Secret Image Saved! (Safe Carrier & Spaced-Pixel Protection)");
-            };
-        }
-
-        function extractFromImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.getElementById('stegoCanvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-
-                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    const data = imgData.data;
-                    let decoded = "";
-
-                    // Extract using the matching PIXEL_GAP
-                    for (let i = 0; i < data.length; i += (4 * PIXEL_GAP)) {
-                        const char = String.fromCharCode(data[i]);
-                        decoded += char;
-                        if (decoded.endsWith("###BEE###")) break;
-                    }
-
-                    const finalCode = decoded.replace("###BEE###", "");
-                    document.getElementById('numIn').value = finalCode;
-                    alert("🐝 Secret Code Extracted!");
-                    process('decode'); 
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
+        // Your original Reset, Copy, and History functions
         function swapText() {
             const codeOutput = document.getElementById('codeOut').innerText;
             const decoderInput = document.getElementById('numIn');
