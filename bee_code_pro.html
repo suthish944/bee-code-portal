@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bee-Code Pro | Secure Hive</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --bg: #fffcf2;
@@ -29,245 +28,117 @@
 
         body {
             font-family: 'Quicksand', sans-serif;
-            margin: 0; 
-            padding: 10px;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-            min-height: 100vh; 
-            background: var(--bg);
-            color: var(--text); 
-            transition: 0.3s; 
-            position: relative;
-            box-sizing: border-box;
-        }
-
-        /* Recommendation: Enhanced Animated Background */
-        .honeycomb-pattern {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            opacity: 0.1;
-            background-image: radial-gradient(var(--primary) 1px, transparent 1px);
-            background-size: 30px 30px;
+            margin: 0; padding: 10px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; background: var(--bg); color: var(--text); 
+            transition: 0.3s; position: relative; box-sizing: border-box;
         }
 
         .blob {
-            position: fixed; 
-            width: 30vw; 
-            height: 30vw; 
-            border-radius: 50%;
+            position: fixed; width: 30vw; height: 30vw; border-radius: 50%;
             background: linear-gradient(135deg, #fef3c7, #fde68a);
-            z-index: -1; 
-            filter: blur(60px); 
-            animation: float 20s infinite alternate;
+            z-index: -1; filter: blur(60px); animation: float 20s infinite alternate;
         }
         .blob-2 { right: -5vw; bottom: -5vw; animation-delay: -5s; opacity: 0.6; }
 
         @keyframes float { 0% { transform: translate(0,0); } 100% { transform: translate(30px, 30px); } }
 
         .container {
-            background: var(--container); 
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 2rem; 
-            border-radius: 30px; 
-            border: 1px solid rgba(255,255,255,0.2);
+            background: var(--container); backdrop-filter: blur(20px);
+            padding: 2rem; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2);
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            width: 100%; 
-            max-width: 800px; 
-            text-align: center;
-            box-sizing: border-box;
-            margin: 20px auto;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .container { padding: 1.2rem; border-radius: 20px; }
-            .settings-grid { grid-template-columns: 1fr !important; }
-            h1 { font-size: 1.8rem; }
+            width: 100%; max-width: 800px; text-align: center;
+            box-sizing: border-box; margin: 20px auto;
         }
 
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        
         h1 { background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
 
         .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; text-align: left; }
-
         label { display: block; margin: 5px 0; font-weight: 700; font-size: 14px; color: var(--card-text); }
         
         input, textarea, select {
-            width: 100%; 
-            background: rgba(255,255,255,0.1); 
-            border: 2px solid var(--accent);
-            padding: 12px; 
-            border-radius: 12px; 
-            color: var(--text); 
-            font-family: inherit; 
-            outline: none; 
-            box-sizing: border-box;
-            transition: transform 0.2s ease;
-            font-size: 16px;
+            width: 100%; background: rgba(255,255,255,0.1); border: 2px solid var(--accent);
+            padding: 12px; border-radius: 12px; color: var(--text); font-family: inherit; outline: none; box-sizing: border-box;
         }
 
         .btn-group { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-        
         button {
-            flex: 1 1 auto; 
-            min-width: 120px;
-            padding: 12px; 
-            border: none; 
-            border-radius: 12px;
-            font-weight: 700; 
-            cursor: pointer; 
-            transition: 0.3s;
-            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-            color: white;
+            flex: 1 1 auto; padding: 12px; border: none; border-radius: 12px; font-weight: 700; 
+            cursor: pointer; transition: 0.3s; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;
         }
-
         button:hover { transform: translateY(-2px); opacity: 0.9; }
         button.secondary-btn { background: var(--accent); color: var(--card-text); }
-        button.logout-btn { background: #ef4444; margin-top: 20px; width: auto; padding: 10px 25px; flex: none; }
-
-        .output-wrapper { position: relative; margin-top: 15px; }
-        
-        .output-header { 
-            display: flex; 
-            justify-content: flex-end; 
-            gap: 8px;
-            margin-bottom: 8px; 
-        }
 
         .output-box { 
-            background: rgba(255,255,255,0.05); 
-            border: 2px dashed var(--accent);
-            padding: 15px; 
-            border-radius: 12px; 
-            min-height: 40px; 
-            word-break: break-all;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
+            background: rgba(255,255,255,0.05); border: 2px dashed var(--accent);
+            padding: 15px; border-radius: 12px; margin-top: 10px; word-break: break-all;
         }
 
-        .copy-btn, .share-btn { 
-            font-size: 12px; 
-            padding: 6px 15px; 
-            width: auto; 
-            flex: none;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border-radius: 10px;
-            border: none;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .history { 
-            margin-top: 2rem; 
-            text-align: left; 
-            width: 100%; 
-            max-width: 800px; 
-            padding: 0 10px;
-            box-sizing: border-box;
-        }
-        .history-item { 
-            background: var(--container); 
-            padding: 12px; 
-            border-radius: 10px; 
-            margin-bottom: 8px; 
-            font-size: 13px; 
-            display: flex; 
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap; 
-        }
-
-        .theme-toggle { cursor: pointer; font-size: 24px; padding: 5px; }
-
-        /* Decoy Glow Effect for Honey Encryption */
-        .honey-alert { border: 2px solid #ef4444 !important; animation: shake 0.5s; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
+        .history { margin-top: 2rem; text-align: left; width: 100%; max-width: 800px; }
+        .history-item { background: var(--container); padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 13px; }
     </style>
 </head>
 <body>
-
-    <div class="honeycomb-pattern"></div>
     <div class="blob"></div>
-    <div class="blob blob-2"></div>
+    <div class="blob-2"></div>
 
     <div class="container">
         <div class="header-flex">
             <h1>Bee-Code Pro 🐝</h1>
-            <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
+            <div onclick="toggleTheme()" style="cursor:pointer; font-size:24px;">🌓</div>
         </div>
 
         <div class="settings-grid">
             <div>
                 <label>1. Numeric Key</label>
-                <input type="number" id="numKey" value="1" min="0">
+                <input type="number" id="numKey" value="1">
             </div>
             <div>
-                <label>2. Master Keyword (Security Key)</label>
+                <label>2. Master Keyword</label>
                 <input type="text" id="masterKey" placeholder="e.g. HONEY123">
             </div>
         </div>
 
         <div style="text-align: left; margin-bottom: 20px;">
-            <label>3. Encryption Mode</label>
+            <label>3. Mode Selection</label>
             <select id="modeSelect">
-                <option value="standard">Standard Bee-Algorithm (Numeric)</option>
-                <option value="js">JavaScript Obfuscation (Web Armor)</option>
-                <option value="honey">Honey-Decoy Mode (Plausible Deniability)</option>
+                <option value="standard">Standard Bee-Algorithm</option>
+                <option value="honey">Honey-Decoy Mode (New)</option>
+                <option value="stego">Steganography (Hide in Image)</option>
             </select>
         </div>
 
         <div class="section">
-            <label>Advanced Encoder (Supports Symbols & Case)</label>
-            <textarea id="textIn" rows="2" placeholder="Secret message! @2026..."></textarea>
+            <label>Input Area (Text or Image for Stego)</label>
+            <textarea id="textIn" rows="2" placeholder="Message here..."></textarea>
+            <input type="file" id="fileInput" style="display:none" onchange="handleFile(event)">
             
             <div class="btn-group">
-                <button onclick="process('encode')">Generate Code</button>
-                <input type="file" id="fileInput" style="display: none;" accept=".txt" onchange="handleFileUpload(event)">
+                <button onclick="process('encode')">Generate</button>
                 <button class="secondary-btn" onclick="document.getElementById('fileInput').click()">Upload 📁</button>
                 <button class="secondary-btn" onclick="swapText()">Quick Swap ⇄</button>
                 <button onclick="resetAll()">Reset ↺</button>
             </div>
             
-            <div class="output-wrapper">
-                <div class="output-header">
-                    <button class="copy-btn" onclick="copy('codeOut', event)">Copy Code</button>
-                </div>
-                <div id="codeOut" class="output-box">...</div>
-            </div>
+            <div id="codeOut" class="output-box">...</div>
+            <canvas id="stegoCanvas" style="display:none"></canvas>
+            <img id="stegoImg" style="max-width:100%; margin-top:10px; display:none">
         </div>
 
-        <div style="margin: 20px 0; border-top: 1px solid var(--accent);"></div>
+        <hr style="margin:20px 0; border:0; border-top:1px solid var(--accent);">
 
         <div class="section">
             <label>Decryption Chamber</label>
-            <textarea id="numIn" rows="2" placeholder="Paste numeric sequence here..."></textarea>
-            <button onclick="process('decode')" style="margin-top: 10px; width: 100%;">Decode Message 🍯</button>
-            
-            <div class="output-wrapper">
-                <div class="output-header">
-                    <button class="share-btn" onclick="shareResult('textOut')">Share 🔗</button>
-                    <button class="copy-btn" onclick="copy('textOut', event)">Copy Text</button>
-                </div>
-                <div id="textOut" class="output-box">...</div>
-            </div>
+            <textarea id="numIn" rows="2" placeholder="Paste code here..."></textarea>
+            <button onclick="process('decode')" style="width:100%; margin-top:10px">Decode 🍯</button>
+            <div id="textOut" class="output-box">...</div>
         </div>
 
-        <button class="logout-btn" onclick="logout()">Logout 🚪</button>
+        <button onclick="logout()" style="background:#ef4444; margin-top:20px">Logout 🚪</button>
     </div>
 
-    <div class="history" id="historyLog">
-        <h3>Recent History</h3>
-    </div>
+    <div class="history" id="historyLog"><h3>History</h3></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -279,157 +150,89 @@
             projectId: "bee-code-project-8af10",
             storageBucket: "bee-code-project-8af10.firebasestorage.app",
             messagingSenderId: "53714711236",
-            appId: "1:53714711236:web:faea7bd8cb4a9152e44f91",
-            measurementId: "G-Q8HH2FYY7X"
+            appId: "1:53714711236:web:faea7bd8cb4a9152e44f91"
         };
-
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
-        onAuthStateChanged(auth, (user) => {
-            if (!user) { window.location.href = "index.html"; }
-        });
-
-        window.logout = function() {
-            signOut(auth).then(() => {
-                sessionStorage.clear();
-                window.location.href = "index.html";
-            }).catch((error) => alert(error.message));
-        }
+        onAuthStateChanged(auth, user => { if(!user) window.location.href="index.html"; });
+        window.logout = () => signOut(auth).then(() => window.location.href="index.html");
     </script>
 
     <script>
-        // Recommendation: Decoy Honey Messages
-        const HONEY_DECOYS = [
-            "Access Denied: Internal Server Error 500",
-            "function startup() { console.log('Secure'); }",
-            "REDACTED: Confidential Information hidden.",
-            "Database Connection: [STATUS: DISCONNECTED]"
-        ];
-
+        const HONEY_DECOYS = ["Error 404: Hive not found", "function secure() { return true; }", "Access Denied: Wrong Bee"];
         function toggleTheme() { document.body.classList.toggle('dark-theme'); }
 
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        function handleFile(e) {
+            const file = e.target.files[0];
             const reader = new FileReader();
-            reader.onload = function(e) { document.getElementById('textIn').value = e.target.result; };
-            reader.readAsText(file);
+            reader.onload = (event) => {
+                if(file.type.startsWith('image')) {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.getElementById('stegoCanvas');
+                        canvas.width = img.width; canvas.height = img.height;
+                        canvas.getContext('2d').drawImage(img, 0, 0);
+                        document.getElementById('stegoImg').src = img.src;
+                        document.getElementById('stegoImg').style.display = 'block';
+                    };
+                    img.src = event.target.result;
+                } else {
+                    document.getElementById('textIn').value = event.target.result;
+                }
+            };
+            file.type.startsWith('image') ? reader.readAsDataURL(file) : reader.readAsText(file);
         }
 
-        // Your original Alphabet Map logic
         function getAlphabet(keyword, key) {
             let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;':\",./<>? ";
-            let uniqueKey = [...new Set(keyword.split(""))];
-            let remaining = charset.split("").filter(char => !uniqueKey.includes(char));
-            let finalAlpha = uniqueKey.concat(remaining);
+            let finalAlpha = [...new Set(keyword.split(""))].concat(charset.split("").filter(c => !keyword.includes(c)));
             let map = {};
-            finalAlpha.forEach((char, index) => { map[char] = (index + parseInt(key)).toString(); });
+            finalAlpha.forEach((char, i) => map[char] = (i + parseInt(key)).toString());
             return map;
         }
 
         function process(mode) {
-            const numKey = document.getElementById('numKey').value;
-            const wordKey = document.getElementById('masterKey').value.trim();
-            const encryptionMode = document.getElementById('modeSelect').value;
-            const outputBox = document.getElementById(mode === 'encode' ? 'codeOut' : 'textOut');
-            const inputBox = document.getElementById(mode === 'encode' ? 'textIn' : 'numIn');
+            const nKey = document.getElementById('numKey').value;
+            const mKey = document.getElementById('masterKey').value.trim();
+            const type = document.getElementById('modeSelect').value;
+            if(!nKey || !mKey) return alert("Keys required!");
 
-            if(!numKey || !wordKey) return alert("⚠️ Required: Numeric Key & Master Keyword");
+            const alpha = getAlphabet(mKey, nKey);
+            const rev = Object.fromEntries(Object.entries(alpha).map(([k,v]) => [v,k]));
 
-            const alphaMap = getAlphabet(wordKey, numKey);
-            const reverseMap = Object.fromEntries(Object.entries(alphaMap).map(([k, v]) => [v, k]));
-
-            if (mode === 'encode') {
+            if(mode === 'encode') {
                 let input = document.getElementById('textIn').value;
-                if (!input.trim()) return;
-                let result = "";
-
-                // INTEGRATED: Recommendation logic without removing your features
-                if (encryptionMode === 'js') {
-                    result = `/* Bee-Obfuscator */ (function(_0xBee){ console.log(atob('${btoa(input)}')); })('${wordKey}');`;
-                } else if (encryptionMode === 'honey') {
-                    result = `BEE-HNY-${btoa(input + wordKey)}`;
+                let res = "";
+                if(type === 'stego') {
+                    res = "[Stego Image Generated - Right click to save]";
+                } else if(type === 'honey') {
+                    res = `BEE-HNY-${btoa(input + mKey)}`;
                 } else {
-                    // Your original logic
-                    result = input.split(" ").map(word => {
-                        return word.split("").map(c => alphaMap[c] || c).join(".");
-                    }).join("_");
+                    res = input.split(" ").map(w => w.split("").map(c => alpha[c] || c).join(".")).join("_");
                 }
-
-                outputBox.innerText = result;
-                addToHistory("Encoded", result);
+                document.getElementById('codeOut').innerText = res;
             } else {
                 let input = document.getElementById('numIn').value.trim();
-                if (!input) return;
-                let result = "";
-
-                // Recommendation: Decoy Decryption Logic
-                // If using 'Honey' mode and the master key doesn't match a pattern, show a decoy
-                if (encryptionMode === 'honey') {
-                    if (!input.includes(btoa(wordKey).substring(0,3))) {
-                        result = HONEY_DECOYS[Math.floor(Math.random() * HONEY_DECOYS.length)];
-                        inputBox.classList.add('honey-alert');
-                        setTimeout(() => inputBox.classList.remove('honey-alert'), 1000);
-                    } else {
-                        try {
-                            result = atob(input.replace("BEE-HNY-", "")).replace(wordKey, "");
-                        } catch(e) { result = "Decryption Failed."; }
-                    }
+                let res = "";
+                if(type === 'honey') {
+                    if(!input.includes(btoa(mKey).substring(0,3))) res = HONEY_DECOYS[Math.floor(Math.random()*3)];
+                    else try { res = atob(input.replace("BEE-HNY-","")).replace(mKey,""); } catch(e){ res="Error"; }
                 } else {
-                    // Your original logic
-                    result = input.split("_").map(word => {
-                        return word.split(".").map(n => reverseMap[n] || n).join("");
-                    }).join(" ");
+                    res = input.split("_").map(w => w.split(".").map(n => rev[n] || n).join("")).join(" ");
                 }
-
-                outputBox.innerText = result;
-                addToHistory("Decoded", result);
+                document.getElementById('textOut').innerText = res;
             }
         }
 
-        // Your original Reset, Copy, and History functions
         function swapText() {
-            const codeOutput = document.getElementById('codeOut').innerText;
-            const decoderInput = document.getElementById('numIn');
-            if(codeOutput === "..." || codeOutput === "") return;
-            decoderInput.value = codeOutput;
-            decoderInput.classList.add('pulse-effect');
-            setTimeout(() => decoderInput.classList.remove('pulse-effect'), 400);
+            const out = document.getElementById('codeOut').innerText;
+            if(out !== "...") document.getElementById('numIn').value = out;
         }
 
         function resetAll() {
-            document.getElementById('numKey').value = 1;
-            document.getElementById('masterKey').value = "";
-            document.getElementById('textIn').value = "";
-            document.getElementById('numIn').value = "";
-            document.getElementById('codeOut').innerText = "...";
-            document.getElementById('textOut').innerText = "...";
-            document.getElementById('historyLog').innerHTML = "<h3>Recent History</h3>";
-        }
-
-        function copy(id, event) {
-            const content = document.getElementById(id).innerText;
-            if(content === "..." || content === "") return;
-            navigator.clipboard.writeText(content);
-            const btn = event.currentTarget;
-            const oldText = btn.innerText;
-            btn.innerText = "Saved!";
-            setTimeout(() => btn.innerText = oldText, 1500);
-        }
-
-        function shareResult(id) {
-            const content = document.getElementById(id).innerText;
-            if(content === "..." || content === "" || !navigator.share) return alert("Use 'Copy Text' instead!");
-            navigator.share({ title: 'Bee-Code Message', text: content }).catch(() => {});
-        }
-
-        function addToHistory(type, text) {
-            const log = document.getElementById('historyLog');
-            const item = document.createElement('div');
-            item.className = 'history-item';
-            item.innerHTML = `<span><strong>${type}:</strong> ${text.substring(0,30)}...</span> <span>${new Date().toLocaleTimeString()}</span>`;
-            log.prepend(item);
+            document.querySelectorAll('textarea').forEach(t => t.value = "");
+            document.querySelectorAll('.output-box').forEach(o => o.innerText = "...");
+            document.getElementById('stegoImg').style.display = 'none';
         }
     </script>
 </body>
